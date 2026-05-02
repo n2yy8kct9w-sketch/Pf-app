@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Project Finance">
+<meta name="theme-color" content="#14130f">
+<title>Project Finance Tracker</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' fill='%2314130f'/><rect x='20' y='20' width='140' height='140' rx='28' fill='%23e8a951'/><text x='90' y='118' font-family='Georgia,serif' font-size='80' font-weight='700' fill='%2314130f' text-anchor='middle'>PF</text></svg>">
+<style>
+:root{--bg:#14130f;--bg-2:#1a1914;--surface:#1f1e18;--surface-2:#262520;--border:#2e2c25;--border-strong:#3a3730;--ink:#f0ebe0;--ink-2:#d4cec0;--ink-muted:#8a857a;--ink-dim:#66625a;--amber:#e8a951;--amber-2:#d4b876;--green:#8fb04f;--red:#d17b6e;--blue:#7fa8c9}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;overscroll-behavior:none}
+.mono{font-family:ui-monospace,'SF Mono',Menlo,Monaco,Consolas,monospace;font-feature-settings:'tnum'}
+.dim{color:var(--ink-muted)}.r{text-align:right}
+.app{min-height:100vh;background:radial-gradient(ellipse at top,#1d1b15 0%,var(--bg) 60%),var(--bg)}
+.header{border-bottom:1px solid var(--border);background:rgba(20,19,15,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:sticky;top:0;z-index:20;padding-top:env(safe-area-inset-top)}
+.header-inner{max-width:1400px;margin:0 auto;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--amber),var(--amber-2));color:#14130f;font-family:'New York',Georgia,serif;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;border-radius:2px;flex-shrink:0}
+.back-btn{width:34px;height:34px;background:var(--surface);border:1px solid var(--border);color:var(--ink);border-radius:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:18px}
+.brand-text{min-width:0;flex:1}
+.brand-title{font-family:'New York',Georgia,serif;font-size:17px;font-weight:500;line-height:1.15;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-sub{font-size:9.5px;text-transform:uppercase;letter-spacing:0.14em;color:var(--ink-muted);margin-top:2px}
+.header-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.btn{font-family:inherit;font-size:12.5px;font-weight:500;border-radius:2px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:1px solid transparent;padding:7px 11px;background:var(--surface);border-color:var(--border);color:var(--ink-2);white-space:nowrap;transition:all 0.15s;-webkit-user-select:none;user-select:none}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--amber);color:#14130f;border-color:var(--amber);font-weight:600}
+.btn-icon{width:34px;height:34px;justify-content:center;padding:0}
+.btn-danger{background:transparent;color:var(--red);border-color:#4a2a26}
+.btn-ghost{background:transparent}
+.btn-sm{padding:5px 9px;font-size:11.5px}
+.main{max-width:1400px;margin:0 auto;padding:16px 14px 80px;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+.banner{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:3px;margin-bottom:16px;font-size:12.5px;line-height:1.5;flex-wrap:wrap}
+.banner-ok{background:rgba(143,176,79,0.08);border:1px solid rgba(143,176,79,0.25);color:var(--green)}
+.banner-main{flex:1;min-width:200px}
+.banner strong{color:var(--ink)}
+.banner-actions{display:flex;gap:6px;flex-shrink:0}
+.kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:20px}
+@media(min-width:680px){.kpi-row{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1000px){.kpi-row{grid-template-columns:repeat(8,1fr)}}
+.kpi{background:var(--surface);padding:14px}
+.kpi-amber{background:linear-gradient(180deg,rgba(232,169,81,0.08),var(--surface))}
+.kpi-green{background:linear-gradient(180deg,rgba(143,176,79,0.06),var(--surface))}
+.kpi-label{font-size:9.5px;text-transform:uppercase;letter-spacing:0.14em;color:var(--ink-muted);margin-bottom:6px}
+.kpi-value{font-family:'New York',Georgia,serif;font-size:20px;font-weight:500;letter-spacing:-0.01em;line-height:1.1}
+.kpi-sub{font-size:10.5px;color:var(--ink-muted);margin-top:3px;font-family:ui-monospace,monospace}
+.panel{background:var(--surface);border:1px solid var(--border);margin-bottom:16px}
+.panel-head{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.panel-head h3{font-family:'New York',Georgia,serif;font-size:15px;font-weight:500;margin:0;letter-spacing:-0.005em}
+.section-label{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-muted);margin:24px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.projects-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:680px){.projects-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1100px){.projects-grid{grid-template-columns:repeat(3,1fr)}}
+.project-card{background:var(--surface);border:1px solid var(--border);text-align:left;padding:16px;cursor:pointer;display:flex;flex-direction:column;gap:12px;font-family:inherit;color:inherit;width:100%}
+.project-card:active{background:var(--surface-2)}
+.pc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.pc-code{font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:0.1em;color:var(--amber);margin-bottom:3px}
+.pc-name{font-family:'New York',Georgia,serif;font-size:16px;font-weight:500;letter-spacing:-0.005em;line-height:1.2}
+.pc-status{font-size:10.5px;padding:4px 9px;border-radius:2px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.pc-status .dot{width:6px;height:6px;border-radius:50%}
+.status-Planning{background:#2A2620;color:#D4B876}.status-Planning .dot{background:#D4B876}
+.status-Active{background:#1E2A20;color:#8FB04F}.status-Active .dot{background:#8FB04F}
+.status-OnHold{background:#2A2620;color:#D17B6E}.status-OnHold .dot{background:#D17B6E}
+.status-Completed{background:#1E252A;color:#7FA8C9}.status-Completed .dot{background:#7FA8C9}
+.pc-meta{display:flex;gap:6px;font-size:11.5px;color:var(--ink-muted)}
+.pc-bars{display:flex;flex-direction:column;gap:9px}
+.util-row{display:flex;flex-direction:column;gap:4px}
+.util-head{display:flex;justify-content:space-between;font-size:11px}
+.util-label{color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.1em}
+.util-nums{color:var(--ink-2)}
+.util-slash{margin:0 4px;color:var(--ink-dim)}
+.util-bar{height:4px;background:var(--bg-2);border-radius:1px;overflow:hidden}
+.util-fill{height:100%;background:var(--amber)}
+.util-fill.over{background:var(--red)}
+.util-pct{font-size:10.5px;color:var(--ink-muted);text-align:right}
+.pc-footer{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;padding-top:10px;border-top:1px solid var(--border)}
+.pc-stat-label{font-size:9.5px;text-transform:uppercase;letter-spacing:0.14em;color:var(--ink-muted);margin-bottom:3px}
+.pc-stat-val{font-family:ui-monospace,monospace;font-size:12.5px;color:var(--ink)}
+.pc-stat-target{color:var(--ink-muted);font-size:10.5px;margin-left:3px}
+.chip{background:var(--surface);border:1px solid var(--border);font-size:10.5px;font-family:ui-monospace,monospace;padding:4px 9px;color:var(--ink-2);display:inline-block}
+.chip-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:transparent;border:none;color:var(--ink-muted);padding:10px 14px;font-family:inherit;font-size:12.5px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-weight:500}
+.tab.active{color:var(--amber);border-bottom-color:var(--amber)}
+.metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border)}
+@media(min-width:680px){.metric-grid{grid-template-columns:repeat(4,1fr)}}
+.metric{background:var(--surface);padding:12px 14px}
+.metric-label{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--ink-muted);margin-bottom:5px}
+.metric-value{font-size:16px;font-weight:500;font-family:ui-monospace,monospace}
+.red{color:var(--red)}.green{color:var(--green)}
+.inp{background:var(--bg-2);border:1px solid var(--border-strong);color:var(--ink);padding:9px 10px;font-family:inherit;font-size:14px;width:100%;border-radius:2px;outline:none;-webkit-appearance:none;appearance:none}
+.inp:focus{border-color:var(--amber)}
+.inp.mono{font-family:ui-monospace,monospace}
+.inp.r{text-align:right}
+textarea.inp{resize:vertical;min-height:60px;line-height:1.5}
+.cell-inp{background:transparent;border:1px solid transparent;color:var(--ink);padding:8px 10px;font-family:inherit;font-size:14px;width:100%;border-radius:2px;outline:none;-webkit-appearance:none;appearance:none}
+.cell-inp:focus{background:var(--bg);border-color:var(--amber)}
+.cell-inp.mono{font-family:ui-monospace,monospace}
+.cell-inp.r{text-align:right}
+select.cell-inp,select.inp{-webkit-appearance:none;appearance:none;padding-right:22px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a857a' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+.item-list{display:flex;flex-direction:column}
+.item-row{border-bottom:1px solid var(--border);padding:10px 14px;display:flex;flex-direction:column;gap:6px}
+.item-row:last-child{border-bottom:none}
+.item-row-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.item-row-fields .full{grid-column:1/-1}
+.item-row-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:2px}
+.field-label-inline{font-size:9.5px;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink-muted);margin-bottom:3px;display:block}
+.empty-row{padding:30px 14px;text-align:center;color:var(--ink-dim);font-style:italic;font-size:12.5px}
+.list-footer{border-top:1px solid var(--border-strong);padding:12px 14px;background:var(--bg-2);display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.list-footer-label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.14em;color:var(--ink-muted);font-weight:600}
+.list-footer-val{color:var(--amber);font-weight:600;font-family:ui-monospace,monospace}
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--amber);color:#14130f;padding:10px 18px;border-radius:2px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,0.4);animation:toastIn 0.25s ease-out;pointer-events:none}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}
+.modal-backdrop{position:fixed;inset:0;background:rgba(10,10,8,0.75);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;z-index:100;padding:0}
+@media(min-width:680px){.modal-backdrop{align-items:center;padding:20px}}
+.modal{background:var(--surface);border:1px solid var(--border-strong);width:100%;max-width:640px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border-radius:8px 8px 0 0;padding-bottom:env(safe-area-inset-bottom)}
+@media(min-width:680px){.modal{border-radius:4px}}
+.modal-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:2}
+.modal-head h2{font-family:'New York',Georgia,serif;font-size:18px;font-weight:500;margin:0}
+.modal-body{padding:16px 18px}
+.modal-desc{color:var(--ink-2);font-size:13px;line-height:1.6;margin:0 0 14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid .full{grid-column:1/-1}
+.field-label{font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink-muted);margin-bottom:4px;display:block}
+.form-actions{display:flex;gap:8px;padding:14px 18px;border-top:1px solid var(--border);justify-content:space-between;flex-wrap:wrap}
+.backup-textarea{width:100%;min-height:200px;max-height:50vh;background:var(--bg);border:1px solid var(--border-strong);color:var(--ink-2);font-family:ui-monospace,monospace;font-size:11.5px;line-height:1.5;padding:10px;border-radius:2px;resize:vertical;outline:none;-webkit-appearance:none;appearance:none}
+.filter-chips{display:flex;flex-wrap:wrap;gap:5px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg-2)}
+.filter-chip{background:transparent;border:1px solid var(--border);color:var(--ink-muted);font-family:inherit;font-size:11.5px;padding:5px 10px;border-radius:2px;cursor:pointer}
+.filter-chip.active{background:var(--amber);color:#14130f;border-color:var(--amber);font-weight:600}
+.pct-grid{padding:14px;display:flex;flex-direction:column;gap:8px}
+.pct-row{display:grid;grid-template-columns:110px 1fr 46px;gap:10px;align-items:center;font-size:12px}
+.pct-name{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pct-bar{height:6px;background:var(--bg-2);border-radius:1px;overflow:hidden}
+.pct-fill{height:100%;background:linear-gradient(90deg,var(--amber-2),var(--amber))}
+.pct-val{color:var(--ink-muted);text-align:right;font-family:ui-monospace,monospace}
+.edit-hint{display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(232,169,81,0.08);border:1px solid rgba(232,169,81,0.2);border-radius:2px;color:var(--amber-2);font-size:11.5px;margin-bottom:14px;line-height:1.4}
+.bar-chart{padding:16px 14px}
+.bar-chart-row{display:flex;align-items:center;gap:10px;font-size:11.5px;margin-bottom:8px}
+.bar-chart-label{width:90px;color:var(--ink-2);font-family:ui-monospace,monospace;font-size:10.5px}
+.bar-chart-bars{flex:1;display:flex;flex-direction:column;gap:3px}
+.bar-chart-bar{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--ink-muted)}
+.bar-chart-fill{height:14px;background:var(--amber);border-radius:1px;min-width:2px;transition:width 0.3s}
+.bar-chart-fill.b-plan{background:#d4b876}
+.bar-chart-fill.b-actual{background:#e8a951}
+.bar-chart-fill.b-revex-plan{background:#5a8a7a}
+.bar-chart-fill.b-revex-actual{background:#8fb04f}
+.bar-chart-val{font-family:ui-monospace,monospace;font-size:10px;min-width:50px}
+.bar-chart-legend{display:flex;gap:14px;padding:10px 14px;border-top:1px solid var(--border);font-size:10.5px;color:var(--ink-muted);flex-wrap:wrap}
+.legend-dot{display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:middle}
+.gauge{padding:16px 14px}
+.gauge-bar{position:relative;height:10px;background:var(--bg-2);border-radius:1px;overflow:visible;margin:14px 0 8px}
+.gauge-fill{height:100%;transition:width 0.4s;border-radius:1px}
+.gauge-footer{display:flex;justify-content:space-between;font-size:11px}
+.gauge-target{position:absolute;top:-4px;bottom:-4px;right:0;width:2px;background:var(--ink-muted)}
+.desc{padding:14px;color:var(--ink-2);line-height:1.6;margin:0;font-size:13px}
+.loading{text-align:center;padding:60px 20px;color:var(--ink-muted)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<!-- <script>
+const STORAGE_KEY='pft-projects-v1';
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+let state={projects:[],view:'dashboard',activeId:null,tab:'overview',editingProject:null,backupModal:null,featureFilter:'All'};
+
+function saveToStorage(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state.projects));return true}catch(e){return false}}
+function loadFromStorage(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)return JSON.parse(r)}catch(e){}return null}
+function setState(p){Object.assign(state,p);if(p.projects)saveToStorage();render()}
+function deleteProject(id){if(!confirm('Delete this project?'))return;setState({projects:state.projects.filter(p=>p.id!==id),view:state.activeId===id?'dashboard':state.view,activeId:state.activeId===id?null:state.activeId});showToast('Deleted')}
+function addProject(p){const w={...p,id:uid()};setState({projects:[...state.projects,w],editingProject:null,view:'detail',activeId:w.id,tab:'overview'});showToast('Project created')}
+
+function fmtINR(n,c){if(n==null||isNaN(n))return '—';const num=Number(n);if(c){if(Math.abs(num)>=1e7)return '₹'+(num/1e7).toFixed(2)+' Cr';if(Math.abs(num)>=1e5)return '₹'+(num/1e5).toFixed(2)+' L';return '₹'+num.toLocaleString('en-IN')}return '₹'+num.toLocaleString('en-IN',{maximumFractionDigits:0})}
+function pct(n){if(n==null||isNaN(n))return '—';return n.toFixed(1)+'%'}
+function sumAmt(a){return(a||[]).reduce((s,x)=>s+(Number(x.amount)||0),0)}
+function escapeHtml(s){if(s==null)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function attr(s){return escapeHtml(s)}
+function showToast(m){const e=document.querySelector('.toast');if(e)e.remove();const t=document.createElement('div');t.className='toast';t.innerHTML='<span>✓</span><span>'+escapeHtml(m)+'</span>';document.body.appendChild(t);setTimeout(()=>t.remove(),1800)}
+
+function sampleProjects(){return[
+{id:uid(),name:'60 HP CVT Platform',code:'CVT-60',platform:'CVT Tractor',hp:60,status:'Active',startDate:'2025-04-01',endDate:'2027-03-31',description:'All-new CVT transmission tractor platform targeting premium segment.',
+capex:{plan:[{id:uid(),category:'Tooling & Dies',amount:85000000,notes:'Transmission casing'},{id:uid(),category:'Machining Lines',amount:120000000,notes:'Gear machining'},{id:uid(),category:'Assembly Line',amount:45000000,notes:'New CVT cell'},{id:uid(),category:'Testing Infra',amount:28000000,notes:'Dyno, hydraulic rig'},{id:uid(),category:'R&D Prototypes',amount:18000000,notes:'12 proto builds'}],actual:[{id:uid(),category:'Tooling & Dies',amount:42000000,date:'2025-11-15',notes:'Phase 1 dies'},{id:uid(),category:'R&D Prototypes',amount:9500000,date:'2025-09-20',notes:'6 protos built'},{id:uid(),category:'Testing Infra',amount:14000000,date:'2025-10-10',notes:'Dyno installed'}]},
+revex:{plan:[{id:uid(),category:'Engineering Manpower',amount:24000000,notes:'12 eng × 24 mo'},{id:uid(),category:'Validation & Testing',amount:15000000,notes:'Field + lab'},{id:uid(),category:'Homologation',amount:4500000,notes:'CMVR'},{id:uid(),category:'Consultancy',amount:8000000,notes:'CVT partner'},{id:uid(),category:'Tools/Software',amount:3500000,notes:'CAE licenses'}],actual:[{id:uid(),category:'Engineering Manpower',amount:9200000,date:'2026-01-31',notes:'Through Jan 26'},{id:uid(),category:'Consultancy',amount:3200000,date:'2025-12-15',notes:'Milestone 1'},{id:uid(),category:'Validation & Testing',amount:4100000,date:'2026-02-10',notes:'Proto testing'}]},
+productCost:{target:725000,current:782000,breakdown:[{id:uid(),component:'Engine',cost:215000},{id:uid(),component:'CVT Transmission',cost:178000},{id:uid(),component:'Hydraulics',cost:62000},{id:uid(),component:'Chassis & Body',cost:95000},{id:uid(),component:'Electricals',cost:42000},{id:uid(),component:'Tyres & Wheels',cost:58000},{id:uid(),component:'Cabin',cost:78000},{id:uid(),component:'Misc / BOP',cost:54000}]},
+irr:{target:22,current:18.4,npv:385000000,paybackYears:4.2,discountRate:12},
+milestones:[{id:uid(),name:'Concept Freeze',plannedDate:'2025-06-30',actualDate:'2025-07-15',status:'Done',notes:'Delayed 2 weeks'},{id:uid(),name:'Design Freeze',plannedDate:'2025-12-31',actualDate:'2026-01-20',status:'Done',notes:''},{id:uid(),name:'First Proto',plannedDate:'2026-04-30',actualDate:'',status:'In Progress',notes:'On track'},{id:uid(),name:'Field Trials',plannedDate:'2026-09-30',actualDate:'',status:'Planned',notes:''},{id:uid(),name:'SOP',plannedDate:'2027-03-31',actualDate:'',status:'Planned',notes:'Start of Production'}],
+features:[{id:uid(),category:'Transmission',name:'Hydrostatic CVT',description:'Hydro-mechanical CVT',priority:'Must',status:'In Dev',notes:'Core USP'},{id:uid(),category:'Transmission',name:'Auto-cruise mode',description:'Load-responsive auto ratio',priority:'Must',status:'Approved',notes:''},{id:uid(),category:'Hydraulics',name:'Electronic Draft Control',description:'EDC with radar sensing',priority:'Should',status:'Approved',notes:'Bosch'},{id:uid(),category:'Cabin',name:'AC Cabin',description:'Factory-fit AC',priority:'Must',status:'Approved',notes:''},{id:uid(),category:'Safety',name:'ROPS/FOPS',description:'Roll-over protection',priority:'Must',status:'Approved',notes:'CMVR'},{id:uid(),category:'PTO',name:'540/540E/1000 PTO',description:'Three-speed PTO',priority:'Must',status:'Approved',notes:''}],
+volumeTargets:[{id:uid(),year:'FY27',planUnits:800,actualUnits:0,revenuePerUnit:1450000,segment:'Premium CVT',notes:'Launch year'},{id:uid(),year:'FY28',planUnits:2400,actualUnits:0,revenuePerUnit:1480000,segment:'Premium CVT',notes:''},{id:uid(),year:'FY29',planUnits:3600,actualUnits:0,revenuePerUnit:1520000,segment:'Premium CVT',notes:'Peak ramp'},{id:uid(),year:'FY30',planUnits:4200,actualUnits:0,revenuePerUnit:1550000,segment:'Premium CVT',notes:''}]},
+{id:uid(),name:'74 HP Cantilever Canopy',code:'CAN-74',platform:'Open Station',hp:74,status:'Active',startDate:'2025-07-01',endDate:'2026-06-30',description:'Pillar-free rear-mounted cantilever canopy.',
+capex:{plan:[{id:uid(),category:'Tooling',amount:12000000,notes:'Frame dies'},{id:uid(),category:'Jigs & Fixtures',amount:4500000,notes:'Welding'},{id:uid(),category:'Prototypes',amount:3500000,notes:'5 protos'}],actual:[{id:uid(),category:'Prototypes',amount:2100000,date:'2025-11-30',notes:'3 protos'},{id:uid(),category:'Jigs & Fixtures',amount:1800000,date:'2026-01-15',notes:'Partial'}]},
+revex:{plan:[{id:uid(),category:'Engineering',amount:6500000,notes:'4 eng × 12 mo'},{id:uid(),category:'CAE & Validation',amount:2800000,notes:'FEA, NVH'},{id:uid(),category:'Field Testing',amount:1500000,notes:''}],actual:[{id:uid(),category:'Engineering',amount:3200000,date:'2026-02-28',notes:''},{id:uid(),category:'CAE & Validation',amount:1800000,date:'2026-01-31',notes:'FEA done'}]},
+productCost:{target:42000,current:38500,breakdown:[{id:uid(),component:'Sheet Metal Frame',cost:14500},{id:uid(),component:'Roof Panel',cost:8200},{id:uid(),component:'Mounting',cost:4800},{id:uid(),component:'Paint & Finish',cost:3200},{id:uid(),component:'Lights',cost:5500},{id:uid(),component:'Trim & Seals',cost:2300}]},
+irr:{target:28,current:31.2,npv:68000000,paybackYears:2.8,discountRate:12},
+milestones:[{id:uid(),name:'Concept Approved',plannedDate:'2025-08-15',actualDate:'2025-08-10',status:'Done',notes:''},{id:uid(),name:'FEA Complete',plannedDate:'2025-12-15',actualDate:'2025-12-22',status:'Done',notes:''},{id:uid(),name:'Proto Build',plannedDate:'2026-02-28',actualDate:'',status:'In Progress',notes:''},{id:uid(),name:'Launch',plannedDate:'2026-06-30',actualDate:'',status:'Planned',notes:''}],
+features:[{id:uid(),category:'Structure',name:'Pillar-free mount',description:'Cantilever design',priority:'Must',status:'In Dev',notes:''},{id:uid(),category:'Weight',name:'HSLA steel',description:'High-strength low-alloy',priority:'Must',status:'Approved',notes:'18% reduction'},{id:uid(),category:'Safety',name:'ROPS-certified',description:'SAE J2194',priority:'Must',status:'Approved',notes:''}],
+volumeTargets:[{id:uid(),year:'FY27',planUnits:1800,actualUnits:0,revenuePerUnit:125000,segment:'74 HP',notes:''},{id:uid(),year:'FY28',planUnits:3200,actualUnits:0,revenuePerUnit:128000,segment:'74 HP',notes:''}]},
+{id:uid(),name:'47 HP Puddling Special',code:'PUD-47',platform:'Puddling 4WD',hp:47,status:'Planning',startDate:'2026-05-01',endDate:'2028-04-30',description:'4WD puddling tractor with hydraulic shuttle.',
+capex:{plan:[{id:uid(),category:'Transmission Tooling',amount:55000000,notes:'4WD gear'},{id:uid(),category:'Final Drive Dies',amount:28000000,notes:'Epicyclic'},{id:uid(),category:'Assembly & Test',amount:18000000,notes:''},{id:uid(),category:'Prototypes',amount:12000000,notes:'8 protos'}],actual:[]},
+revex:{plan:[{id:uid(),category:'Engineering',amount:18000000,notes:'10 eng × 24 mo'},{id:uid(),category:'Validation',amount:6500000,notes:'Field puddling'},{id:uid(),category:'Homologation',amount:3800000,notes:''}],actual:[]},
+productCost:{target:485000,current:0,breakdown:[]},
+irr:{target:24,current:0,npv:0,paybackYears:0,discountRate:12},
+milestones:[{id:uid(),name:'Business Case',plannedDate:'2026-04-30',actualDate:'',status:'Planned',notes:''},{id:uid(),name:'Concept Design',plannedDate:'2026-09-30',actualDate:'',status:'Planned',notes:''}],
+features:[],
+volumeTargets:[{id:uid(),year:'FY29',planUnits:600,actualUnits:0,revenuePerUnit:720000,segment:'Puddling',notes:''}]}
+]}
+
+function emptyProject(){return{name:'',code:'',platform:'',hp:0,status:'Planning',startDate:'',endDate:'',description:'',capex:{plan:[],actual:[]},revex:{plan:[],actual:[]},productCost:{target:0,current:0,breakdown:[]},irr:{target:0,current:0,npv:0,paybackYears:0,discountRate:12},milestones:[],features:[],volumeTargets:[]}}
+
+document.addEventListener('click',handleClick);
+document.addEventListener('change',handleChange);
+document.addEventListener('input',handleInput);
+
+function findAction(el){while(el&&el!==document.body){if(el.dataset&&el.dataset.action)return el;el=el.parentElement}return null}
+
+function handleClick(e){
+if(e.target.classList&&e.target.classList.contains('modal-backdrop')){
+const b=e.target.dataset.backdrop;
+if(b){if(b==='cancel-new')setState({editingProject:null});else if(b==='close-backup')setState({backupModal:null});return}}
+const t=findAction(e.target);if(!t)return;
+const a=t.dataset.action,id=t.dataset.id,sec=t.dataset.section,idx=t.dataset.idx;
+switch(a){
+case 'open':setState({view:'detail',activeId:id,tab:'overview'});break;
+case 'back':setState({view:'dashboard',activeId:null});break;
+case 'tab':setState({tab:t.dataset.tab});break;
+case 'filter':setState({featureFilter:t.dataset.filter});break;
+case 'new-project':setState({editingProject:'new'});break;
+case 'cancel-new':setState({editingProject:null});break;
+case 'save-new':submitNewProject();break;
+case 'export':setState({backupModal:'export'});break;
+case 'import':setState({backupModal:'import'});break;
+case 'close-backup':setState({backupModal:null});break;
+case 'copy-export':copyExport();break;
+case 'do-import':doImport();break;
+case 'add-line':addLine(id,sec);break;
+case 'del-line':delLine(id,sec,idx);break;
+case 'add-breakdown':addBreakdown(id);break;
+case 'del-breakdown':delBreakdown(id,idx);break;
+case 'add-milestone':addMilestone(id);break;
+case 'del-milestone':delMilestone(id,idx);break;
+case 'add-feature':addFeature(id);break;
+case 'del-feature':delFeature(id,idx);break;
+case 'add-volume':addVolume(id);break;
+case 'del-volume':delVolume(id,idx);break;
+case 'delete-project':deleteProject(id);break;
+case 'reset-samples':resetSamples();break}}
+
+function handleChange(e){const el=e.target;if(!el.dataset||!el.dataset.bind)return;applyBinding(el)}
+function handleInput(e){const el=e.target;if(!el.dataset||!el.dataset.bind)return;applyBinding(el,true)}
+
+function applyBinding(el,silent){
+const b=el.dataset.bind,parts=b.split('.'),pid=parts[0];
+const proj=state.projects.find(p=>p.id===pid);if(!proj)return;
+const v=el.type==='number'?(el.value===''?0:Number(el.value)):el.value;
+let t=proj;
+for(let i=1;i<parts.length-1;i++){const part=parts[i];if(part.includes(':')){const[a,ix]=part.split(':');t=t[a][Number(ix)]}else{if(t[part]==null)t[part]={};t=t[part]}}
+t[parts[parts.length-1]]=v;saveToStorage();
+if(!silent){render();showToast('Saved')}}
+
+function addLine(pid,sec){const p=state.projects.find(x=>x.id===pid);if(!p)return;const[t,s]=sec.split(':');const it=s==='actual'?{id:uid(),category:'',amount:0,date:new Date().toISOString().slice(0,10),notes:''}:{id:uid(),category:'',amount:0,notes:''};p[t][s]=[...(p[t][s]||[]),it];setState({projects:[...state.projects]})}
+function delLine(pid,sec,idx){if(!confirm('Delete?'))return;const p=state.projects.find(x=>x.id===pid);const[t,s]=sec.split(':');p[t][s].splice(Number(idx),1);setState({projects:[...state.projects]})}
+function addBreakdown(pid){const p=state.projects.find(x=>x.id===pid);if(!p.productCost)p.productCost={target:0,current:0,breakdown:[]};p.productCost.breakdown=[...(p.productCost.breakdown||[]),{id:uid(),component:'',cost:0}];setState({projects:[...state.projects]})}
+function delBreakdown(pid,idx){if(!confirm('Delete?'))return;const p=state.projects.find(x=>x.id===pid);p.productCost.breakdown.splice(Number(idx),1);setState({projects:[...state.projects]})}
+function addMilestone(pid){const p=state.projects.find(x=>x.id===pid);p.milestones=[...(p.milestones||[]),{id:uid(),name:'',plannedDate:'',actualDate:'',status:'Planned',notes:''}];setState({projects:[...state.projects]})}
+function delMilestone(pid,idx){if(!confirm('Delete?'))return;const p=state.projects.find(x=>x.id===pid);p.milestones.splice(Number(idx),1);setState({projects:[...state.projects]})}
+function addFeature(pid){const p=state.projects.find(x=>x.id===pid);p.features=[...(p.features||[]),{id:uid(),category:'',name:'',description:'',priority:'Should',status:'Proposed',notes:''}];setState({projects:[...state.projects]})}
+function delFeature(pid,idx){if(!confirm('Delete?'))return;const p=state.projects.find(x=>x.id===pid);p.features.splice(Number(idx),1);setState({projects:[...state.projects]})}
+function addVolume(pid){const p=state.projects.find(x=>x.id===pid);p.volumeTargets=[...(p.volumeTargets||[]),{id:uid(),year:'',planUnits:0,actualUnits:0,revenuePerUnit:0,segment:'',notes:''}];setState({projects:[...state.projects]})}
+function delVolume(pid,idx){if(!confirm('Delete?'))return;const p=state.projects.find(x=>x.id===pid);p.volumeTargets.splice(Number(idx),1);setState({projects:[...state.projects]})}
+function resetSamples(){if(!confirm('Reset to samples?'))return;setState({projects:sampleProjects(),view:'dashboard',activeId:null});showToast('Reset')}
+
+function submitNewProject(){
+const p=emptyProject();
+p.name=document.getElementById('new-name').value.trim();
+p.code=document.getElementById('new-code').value.trim();
+p.platform=document.getElementById('new-platform').value.trim();
+p.hp=Number(document.getElementById('new-hp').value)||0;
+p.status=document.getElementById('new-status').value;
+p.startDate=document.getElementById('new-start').value;
+p.endDate=document.getElementById('new-end').value;
+p.description=document.getElementById('new-desc').value.trim();
+if(!p.name){alert('Please enter a project name');return}
+addProject(p)}
+
+async function copyExport(){const t=JSON.stringify(state.projects,null,2);try{if(navigator.clipboard&&navigator.clipboard.writeText)await navigator.clipboard.writeText(t);else{const ta=document.getElementById('backup-ta');ta.select();ta.setSelectionRange(0,999999);document.execCommand('copy')}showToast('Copied')}catch(e){alert('Long-press text, Select All, Copy')}}
+function doImport(){const t=document.getElementById('import-ta').value;try{const d=JSON.parse(t);if(!Array.isArray(d))throw 0;if(confirm('Replace with '+d.length+' projects?')){setState({projects:d,backupModal:null,view:'dashboard',activeId:null});showToast('Imported')}}catch(e){alert('Invalid JSON')}}
+
+function render(){
+const app=document.getElementById('app');
+const a=state.projects.find(p=>p.id===state.activeId);
+app.innerHTML=[renderHeader(a),'<main class="main">',state.view==='dashboard'?renderDashboard():a?renderDetail(a):'<div class="loading">Not found</div>','</main>',state.editingProject==='new'?renderNewModal():'',state.backupModal==='export'?renderExportModal():'',state.backupModal==='import'?renderImportModal():''].join('');
+if(window._fbind){const el=document.querySelector('[data-bind="'+window._fbind+'"]');if(el){el.focus();if(el.setSelectionRange&&window._fpos!=null){try{el.setSelectionRange(window._fpos,window._fpos)}catch(e){}}}}}
+
+document.addEventListener('focusin',e=>{if(e.target.dataset&&e.target.dataset.bind){window._fbind=e.target.dataset.bind;window._fpos=e.target.selectionStart}});
+document.addEventListener('focusout',e=>{setTimeout(()=>{if(document.activeElement&&document.activeElement.dataset&&document.activeElement.dataset.bind)return;window._fbind=null;window._fpos=null},50)});
+
+function renderHeader(a){return '<header class="header"><div class="header-inner"><div class="brand">'+(state.view==='detail'?'<button class="back-btn" data-action="back">‹</button>':'<div class="logo-mark">PF</div>')+'<div class="brand-text"><div class="brand-title">'+escapeHtml(state.view==='detail'&&a?a.name:'Project Finance')+'</div><div class="brand-sub">'+(state.view==='detail'?'Project Detail':'Capex · Revex · IRR · Timeline')+'</div></div></div><div class="header-actions">'+(state.view==='dashboard'?'<button class="btn btn-icon" data-action="import">↓</button><button class="btn btn-icon" data-action="export">↑</button><button class="btn btn-primary" data-action="new-project">+ New</button>':'')+'</div></div></header>'}
+
+function renderBanner(){return '<div class="banner banner-ok"><span>✓</span><div class="banner-main"><strong>Auto-save active.</strong> Data saved on this device.</div><div class="banner-actions"><button class="btn btn-sm" data-action="import">Import</button><button class="btn btn-sm" data-action="export">Export</button></div></div>'}
+
+function renderDashboard(){
+if(state.projects.length===0)return renderBanner()+'<div class="loading"><h2 style="font-family:\'New York\',Georgia,serif;font-weight:500;">No projects yet</h2><p>Tap + New to start.</p><button class="btn btn-primary" data-action="new-project">+ New Project</button> <button class="btn" data-action="reset-samples">Load Samples</button></div>';
+const t=computeTotals();
+return renderBanner()+renderKPIs(t)+renderChart()+'<div class="section-label">PROJECTS</div><div class="projects-grid">'+state.projects.map(renderCard).join('')+'</div>'}
+
+function computeTotals(){const t={cP:0,cA:0,rP:0,rA:0,act:0,iSum:0,iCnt:0,vol:0,rev:0};state.projects.forEach(p=>{t.cP+=sumAmt(p.capex&&p.capex.plan);t.cA+=sumAmt(p.capex&&p.capex.actual);t.rP+=sumAmt(p.revex&&p.revex.plan);t.rA+=sumAmt(p.revex&&p.revex.actual);if(p.status==='Active')t.act++;if(p.irr&&p.irr.current>0){t.iSum+=p.irr.current;t.iCnt++}(p.volumeTargets||[]).forEach(v=>{t.vol+=Number(v.planUnits)||0;t.rev+=(Number(v.planUnits)||0)*(Number(v.revenuePerUnit)||0)})});t.avgI=t.iCnt?t.iSum/t.iCnt:0;return t}
+
+function renderKPIs(t){return '<section class="kpi-row">'+kpi('Projects',state.projects.length,t.act+' active','kpi-amber')+kpi('Capex Plan',fmtINR(t.cP,1),fmtINR(t.cA,1)+' actual')+kpi('Capex Util',pct(t.cP?(t.cA/t.cP)*100:0),'of plan')+kpi('Revex Plan',fmtINR(t.rP,1),fmtINR(t.rA,1)+' spent')+kpi('Revex Util',pct(t.rP?(t.rA/t.rP)*100:0),'of plan')+kpi('Volume',t.vol.toLocaleString('en-IN'),'units')+kpi('Revenue',fmtINR(t.rev,1),'plan')+kpi('Avg IRR',pct(t.avgI),'','kpi-green')+'</section>'}
+function kpi(l,v,s,c){return '<div class="kpi '+(c||'')+'"><div class="kpi-label">'+l+'</div><div class="kpi-value">'+v+'</div>'+(s?'<div class="kpi-sub">'+s+'</div>':'')+'</div>'}
+
+function renderChart(){const d=state.projects.map(p=>({c:p.code||p.name.slice(0,10),cP:sumAmt(p.capex&&p.capex.plan),cA:sumAmt(p.capex&&p.capex.actual),rP:sumAmt(p.revex&&p.revex.plan),rA:sumAmt(p.revex&&p.revex.actual)}));const m=Math.max(1,...d.flatMap(x=>[x.cP,x.cA,x.rP,x.rA]));return '<div class="panel"><div class="panel-head"><h3>Capex & Revex</h3><span class="dim" style="font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;">₹</span></div><div class="bar-chart">'+d.map(x=>'<div class="bar-chart-row"><div class="bar-chart-label">'+escapeHtml(x.c)+'</div><div class="bar-chart-bars">'+bar(x.cP,m,'b-plan','CP '+fmtINR(x.cP,1))+bar(x.cA,m,'b-actual','CA '+fmtINR(x.cA,1))+bar(x.rP,m,'b-revex-plan','RP '+fmtINR(x.rP,1))+bar(x.rA,m,'b-revex-actual','RA '+fmtINR(x.rA,1))+'</div></div>').join('')+'</div></div>'}
+function bar(v,m,c,l){return '<div class="bar-chart-bar"><div class="bar-chart-fill '+c+'" style="width:'+((v/m)*100)+'%;"></div><span class="bar-chart-val">'+l+'</span></div>'}
+
+function renderCard(p){const cP=sumAmt(p.capex&&p.capex.plan),cA=sumAmt(p.capex&&p.capex.actual),rP=sumAmt(p.revex&&p.revex.plan),rA=sumAmt(p.revex&&p.revex.actual);const cU=cP?(cA/cP)*100:0,rU=rP?(rA/rP)*100:0;const sc='status-'+(p.status||'Planning').replace(/\s/g,'');const nm=(p.milestones||[]).find(m=>m.status!=='Done');const lv=(p.volumeTargets||[]).reduce((s,v)=>s+(Number(v.planUnits)||0),0);return '<button class="project-card" data-action="open" data-id="'+p.id+'"><div class="pc-top"><div><div class="pc-code">'+escapeHtml(p.code||'—')+'</div><div class="pc-name">'+escapeHtml(p.name)+'</div></div><span class="pc-status '+sc+'"><span class="dot"></span>'+escapeHtml(p.status)+'</span></div><div class="pc-meta"><span>'+escapeHtml(String(p.hp||0))+' HP</span> · <span>'+escapeHtml(p.platform||'—')+'</span></div><div class="pc-bars">'+ub('Capex',cU,cP,cA)+ub('Revex',rU,rP,rA)+'</div><div class="pc-footer">'+ps('IRR',pct((p.irr&&p.irr.current)||0)+'<span class="pc-stat-target"> / '+pct((p.irr&&p.irr.target)||0)+'</span>')+ps('Volume','<span class="mono">'+lv.toLocaleString('en-IN')+'</span>')+ps('Features','<span class="mono">'+(p.features||[]).length+'</span>')+ps('Next','<span style="font-family:inherit;font-size:12px;">'+escapeHtml(nm?nm.name:'—')+'</span>')+'</div></button>'}
+function ub(l,u,p,a){return '<div class="util-row"><div class="util-head"><span class="util-label">'+l+'</span><span class="util-nums"><span class="mono">'+fmtINR(a,1)+'</span><span class="util-slash">/</span><span class="mono dim">'+fmtINR(p,1)+'</span></span></div><div class="util-bar"><div class="util-fill '+(u>100?'over':'')+'" style="width:'+Math.min(u,100)+'%;"></div></div><div class="util-pct mono">'+pct(u)+'</div></div>'}
+function ps(l,v){return '<div><div class="pc-stat-label">'+l+'</div><div class="pc-stat-val">'+v+'</div></div>'}
+
+function renderDetail(p){const tabs=[['overview','Overview'],['features','Features'],['capex','Capex'],['revex','Revex'],['volume','Volume'],['cost','Product Cost'],['irr','IRR'],['timeline','Timeline'],['settings','Settings']];let body='';switch(state.tab){case 'overview':body=tabOverview(p);break;case 'features':body=tabFeatures(p);break;case 'capex':body=tabExpense(p,'capex');break;case 'revex':body=tabExpense(p,'revex');break;case 'volume':body=tabVolume(p);break;case 'cost':body=tabCost(p);break;case 'irr':body=tabIRR(p);break;case 'timeline':body=tabTimeline(p);break;case 'settings':body=tabSettings(p);break}return renderBanner()+'<div class="chip-row"><span class="chip">'+escapeHtml(p.code||'—')+'</span><span class="chip">'+escapeHtml(String(p.hp||0))+' HP</span><span class="chip">'+escapeHtml(p.platform||'—')+'</span></div><nav class="tabs">'+tabs.map(([id,l])=>'<button class="tab '+(state.tab===id?'active':'')+'" data-action="tab" data-tab="'+id+'">'+l+'</button>').join('')+'</nav>'+body}
+
+function tabOverview(p){const cP=sumAmt(p.capex&&p.capex.plan),cA=sumAmt(p.capex&&p.capex.actual),rP=sumAmt(p.revex&&p.revex.plan),rA=sumAmt(p.revex&&p.revex.actual);const pc=p.productCost||{},ir=p.irr||{};return '<div class="panel"><div class="panel-head"><h3>Description</h3></div><p class="desc">'+escapeHtml(p.description||'No description.')+'</p></div><div class="panel"><div class="panel-head"><h3>Key Metrics</h3></div><div class="metric-grid">'+mc('Capex Plan',fmtINR(cP,1))+mc('Capex Actual',fmtINR(cA,1),cA>cP?'red':null)+mc('Revex Plan',fmtINR(rP,1))+mc('Revex Actual',fmtINR(rA,1),rA>rP?'red':null)+mc('Cost Target',fmtINR(pc.target||0,1))+mc('Cost Current',fmtINR(pc.current||0,1),(pc.current||0)>(pc.target||0)?'red':'green')+mc('IRR Target',pct(ir.target||0))+mc('IRR Current',pct(ir.current||0),(ir.current||0)>=(ir.target||0)?'green':'red')+'</div></div>'}
+function mc(l,v,c){return '<div class="metric"><div class="metric-label">'+l+'</div><div class="metric-value '+(c||'')+'">'+v+'</div></div>'}
+
+function tabExpense(p,t){const d=p[t]||{plan:[],actual:[]};const pT=sumAmt(d.plan),aT=sumAmt(d.actual);const va=aT-pT,vp=pT?(va/pT)*100:0;return '<div class="metric-grid" style="margin-bottom:14px;">'+mc(t.toUpperCase()+' Plan',fmtINR(pT,1))+mc(t.toUpperCase()+' Actual',fmtINR(aT,1),aT>pT?'red':'green')+mc('Variance',fmtINR(va,1),va>0?'red':'green')+mc('Variance %',pct(vp),vp>0?'red':'green')+'</div><div class="edit-hint">ⓘ Tap any field to edit. Saves auto.</div>'+renderSec(p.id,t,'plan','Plan',d.plan||[])+renderSec(p.id,t,'actual','Actual',d.actual||[])}
+function renderSec(pid,t,s,ti,it){const tot=sumAmt(it),hd=s==='actual',sk=t+':'+s;return '<div class="panel"><div class="panel-head"><h3>'+ti+'</h3><button class="btn btn-sm" data-action="add-line" data-id="'+pid+'" data-section="'+sk+'">+ Add</button></div><div class="item-list">'+(it.length===0?'<div class="empty-row">Tap + Add</div>':it.map((x,i)=>renderExpItem(pid,t,s,i,x,hd)).join(''))+'</div><div class="list-footer"><span class="list-footer-label">Total</span><span class="list-footer-val">'+fmtINR(tot)+'</span></div></div>'}
+function renderExpItem(pid,t,s,i,x,hd){const b=pid+'.'+t+'.'+s+':'+i;return '<div class="item-row"><div class="item-row-fields"><div class="full"><label class="field-label-inline">Category</label><input class="cell-inp" data-bind="'+b+'.category" value="'+attr(x.category)+'"></div><div><label class="field-label-inline">Amount</label><input class="cell-inp mono r" type="number" data-bind="'+b+'.amount" value="'+(x.amount||0)+'"></div>'+(hd?'<div><label class="field-label-inline">Date</label><input class="cell-inp mono" type="date" data-bind="'+b+'.date" value="'+attr(x.date||'')+'"></div>':'<div></div>')+'<div class="full"><label class="field-label-inline">Notes</label><input class="cell-inp" data-bind="'+b+'.notes" value="'+attr(x.notes||'')+'"></div></div><div class="item-row-actions"><button class="btn btn-sm btn-danger" data-action="del-line" data-id="'+pid+'" data-section="'+t+':'+s+'" data-idx="'+i+'">Delete</button></div></div>'}
+
+function tabCost(p){const pc=p.productCost||{target:0,current:0,breakdown:[]};const bt=(pc.breakdown||[]).reduce((s,x)=>s+(Number(x.cost)||0),0);const v=(pc.current||0)-(pc.target||0),vp=pc.target?(v/pc.target)*100:0,vc=v>0?'red':'green';return '<div class="edit-hint">ⓘ Tap any field to edit.</div><div class="panel"><div class="panel-head"><h3>Cost Targets</h3></div><div class="metric-grid"><div class="metric"><div class="metric-label">Target</div><input class="cell-inp mono" type="number" data-bind="'+p.id+'.productCost.target" value="'+(pc.target||0)+'"></div><div class="metric"><div class="metric-label">Current</div><input class="cell-inp mono" type="number" data-bind="'+p.id+'.productCost.current" value="'+(pc.current||0)+'"></div>'+mc('Variance',fmtINR(v),vc)+mc('Variance %',pct(vp),vc)+'</div></div><div class="panel"><div class="panel-head"><h3>BOM Breakdown</h3><button class="btn btn-sm" data-action="add-breakdown" data-id="'+p.id+'">+ Add</button></div><div class="item-list">'+((pc.breakdown||[]).length===0?'<div class="empty-row">Tap + Add</div>':(pc.breakdown||[]).map((x,i)=>renderBdItem(p.id,i,x)).join(''))+'</div><div class="list-footer"><span class="list-footer-label">Total</span><span class="list-footer-val">'+fmtINR(bt)+'</span></div></div>'}
+function renderBdItem(pid,i,x){const b=pid+'.productCost.breakdown:'+i;return '<div class="item-row"><div class="item-row-fields"><div class="full"><label class="field-label-inline">Component</label><input class="cell-inp" data-bind="'+b+'.component" value="'+attr(x.component)+'"></div><div class="full"><label class="field-label-inline">Cost</label><input class="cell-inp mono r" type="number" data-bind="'+b+'.cost" value="'+(x.cost||0)+'"></div></div><div class="item-row-actions"><button class="btn btn-sm btn-danger" data-action="del-breakdown" data-id="'+pid+'" data-idx="'+i+'">Delete</button></div></div>'}
+
+function tabIRR(p){const ir=p.irr||{target:0,current:0,npv:0,paybackYears:0,discountRate:12};const m=(ir.current||0)>=(ir.target||0);const pr=ir.target?(ir.current/ir.target)*100:0;return '<div class="edit-hint">ⓘ Tap any field to edit.</div><div class="panel"><div class="panel-head"><h3>Returns</h3></div><div class="metric-grid">'+irrF(p.id,'target','Target IRR (%)',ir.target)+irrF(p.id,'current','Current IRR (%)',ir.current,m?'green':'red')+irrF(p.id,'npv','NPV (₹)',ir.npv)+irrF(p.id,'paybackYears','Payback (yrs)',ir.paybackYears)+irrF(p.id,'discountRate','Discount (%)',ir.discountRate)+'</div><div class="gauge"><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;"><span class="dim" style="text-transform:uppercase;letter-spacing:0.14em;">Progress</span><span class="mono '+(m?'green':'')+'" style="font-weight:600;">'+pr.toFixed(0)+'%</span></div><div class="gauge-bar"><div class="gauge-fill" style="width:'+Math.min(pr,120)+'%;background:'+(m?'var(--green)':'var(--amber)')+';"></div><div class="gauge-target"></div></div><div class="gauge-footer"><span class="mono dim">'+pct(ir.current)+'</span><span class="mono dim">'+pct(ir.target)+'</span></div></div></div>'}
+function irrF(pid,k,l,v,c){return '<div class="metric"><div class="metric-label">'+l+'</div><input class="cell-inp mono '+(c||'')+'" type="number" step="0.1" data-bind="'+pid+'.irr.'+k+'" value="'+(v||0)+'"></div>'}
+
+function tabTimeline(p){const ms=p.milestones||[];return '<div class="edit-hint">ⓘ Tap any field to edit.</div><div class="panel"><div class="panel-head"><h3>Milestones</h3><button class="btn btn-sm" data-action="add-milestone" data-id="'+p.id+'">+ Add</button></div><div class="item-list">'+(ms.length===0?'<div class="empty-row">Tap + Add</div>':ms.map((m,i)=>renderMsItem(p.id,i,m)).join(''))+'</div></div>'}
+function renderMsItem(pid,i,m){const b=pid+'.milestones:'+i;let sl='—';if(m.plannedDate&&m.actualDate){const d=Math.round((new Date(m.actualDate)-new Date(m.plannedDate))/86400000);sl=(d>0?'+':'')+d+'d'}return '<div class="item-row"><div class="item-row-fields"><div class="full"><label class="field-label-inline">Name</label><input class="cell-inp" data-bind="'+b+'.name" value="'+attr(m.name)+'"></div><div><label class="field-label-inline">Planned</label><input class="cell-inp mono" type="date" data-bind="'+b+'.plannedDate" value="'+attr(m.plannedDate||'')+'"></div><div><label class="field-label-inline">Actual</label><input class="cell-inp mono" type="date" data-bind="'+b+'.actualDate" value="'+attr(m.actualDate||'')+'"></div><div><label class="field-label-inline">Status</label><select class="cell-inp" data-bind="'+b+'.status">'+['Planned','In Progress','Done','Delayed'].map(s=>'<option'+(s===m.status?' selected':'')+'>'+s+'</option>').join('')+'</select></div><div><label class="field-label-inline">Slip</label><div class="mono" style="padding:8px 0;color:'+(sl.startsWith('+')?'var(--red)':sl.startsWith('-')?'var(--green)':'var(--ink-muted)')+'">'+sl+'</div></div><div class="full"><label class="field-label-inline">Notes</label><input class="cell-inp" data-bind="'+b+'.notes" value="'+attr(m.notes||'')+'"></div></div><div class="item-row-actions"><button class="btn btn-sm btn-danger" data-action="del-milestone" data-id="'+pid+'" data-idx="'+i+'">Delete</button></div></div>'}
+
+function tabFeatures(p){const fs=p.features||[];const cats=['All',...Array.from(new Set(fs.map(f=>f.category).filter(Boolean)))];const fil=state.featureFilter,filt=fil==='All'?fs:fs.filter(f=>f.category===fil);const c={tot:fs.length,must:fs.filter(f=>f.priority==='Must').length,inDev:fs.filter(f=>f.status==='In Dev').length,impl:fs.filter(f=>f.status==='Implemented').length};return '<div class="metric-grid" style="margin-bottom:14px;">'+mc('Total',c.tot)+mc('Must',c.must)+mc('In Dev',c.inDev)+mc('Implemented',c.impl,'green')+'</div><div class="edit-hint">ⓘ Tap any field to edit.</div><div class="panel"><div class="panel-head"><h3>Features</h3><button class="btn btn-sm" data-action="add-feature" data-id="'+p.id+'">+ Add</button></div>'+(cats.length>1?'<div class="filter-chips">'+cats.map(c=>'<button class="filter-chip '+(fil===c?'active':'')+'" data-action="filter" data-filter="'+attr(c)+'">'+escapeHtml(c)+'</button>').join('')+'</div>':'')+'<div class="item-list">'+(filt.length===0?'<div class="empty-row">Tap + Add</div>':filt.map(f=>renderFItem(p.id,fs.indexOf(f),f)).join(''))+'</div></div>'}
+function renderFItem(pid,i,f){const b=pid+'.features:'+i;return '<div class="item-row"><div class="item-row-fields"><div><label class="field-label-inline">Category</label><input class="cell-inp" data-bind="'+b+'.category" value="'+attr(f.category||'')+'"></div><div><label class="field-label-inline">Priority</label><select class="cell-inp" data-bind="'+b+'.priority">'+['Must','Should','Nice'].map(s=>'<option'+(s===f.priority?' selected':'')+'>'+s+'</option>').join('')+'</select></div><div class="full"><label class="field-label-inline">Name</label><input class="cell-inp" data-bind="'+b+'.name" value="'+attr(f.name||'')+'"></div><div class="full"><label class="field-label-inline">Description</label><input class="cell-inp" data-bind="'+b+'.description" value="'+attr(f.description||'')+'"></div><div class="full"><label class="field-label-inline">Status</label><select class="cell-inp" data-bind="'+b+'.status">'+['Proposed','Approved','In Dev','Implemented','Dropped'].map(s=>'<option'+(s===f.status?' selected':'')+'>'+s+'</option>').join('')+'</select></div><div class="full"><label class="field-label-inline">Notes</label><input class="cell-inp" data-bind="'+b+'.notes" value="'+attr(f.notes||'')+'"></div></div><div class="item-row-actions"><button class="btn btn-sm btn-danger" data-action="del-feature" data-id="'+pid+'" data-idx="'+i+'">Delete</button></div></div>'}
+
+function tabVolume(p){const vs=p.volumeTargets||[];const tP=vs.reduce((s,v)=>s+(Number(v.planUnits)||0),0),tA=vs.reduce((s,v)=>s+(Number(v.actualUnits)||0),0),tR=vs.reduce((s,v)=>s+(Number(v.planUnits)||0)*(Number(v.revenuePerUnit)||0),0);const m=Math.max(1,...vs.flatMap(v=>[Number(v.planUnits)||0,Number(v.actualUnits)||0]));return '<div class="metric-grid" style="margin-bottom:14px;">'+mc('Plan Units',tP.toLocaleString('en-IN'))+mc('Actual',tA.toLocaleString('en-IN'))+mc('Achievement',pct(tP?(tA/tP)*100:0))+mc('Revenue',fmtINR(tR,1))+'</div><div class="edit-hint">ⓘ Tap to edit.</div>'+(vs.length>0?'<div class="panel"><div class="panel-head"><h3>By Year</h3></div><div class="bar-chart">'+vs.map(v=>'<div class="bar-chart-row"><div class="bar-chart-label">'+escapeHtml(v.year||'—')+'</div><div class="bar-chart-bars">'+bar(Number(v.planUnits)||0,m,'b-plan','Plan '+(Number(v.planUnits)||0).toLocaleString('en-IN'))+bar(Number(v.actualUnits)||0,m,'b-revex-actual','Actual '+(Number(v.actualUnits)||0).toLocaleString('en-IN'))+'</div></div>').join('')+'</div></div>':'')+'<div class="panel"><div class="panel-head"><h3>Volume Targets</h3><button class="btn btn-sm" data-action="add-volume" data-id="'+p.id+'">+ Add</button></div><div class="item-list">'+(vs.length===0?'<div class="empty-row">Tap + Add</div>':vs.map((v,i)=>renderVItem(p.id,i,v)).join(''))+'</div></div>'}
+function renderVItem(pid,i,v){const b=pid+'.volumeTargets:'+i;const pu=Number(v.planUnits)||0,au=Number(v.actualUnits)||0;const ach=pu?(au/pu)*100:0;return '<div class="item-row"><div class="item-row-fields"><div><label class="field-label-inline">Year</label><input class="cell-inp mono" data-bind="'+b+'.year" value="'+attr(v.year||'')+'"></div><div><label class="field-label-inline">Segment</label><input class="cell-inp" data-bind="'+b+'.segment" value="'+attr(v.segment||'')+'"></div><div><label class="field-label-inline">Plan</label><input class="cell-inp r mono" type="number" data-bind="'+b+'.planUnits" value="'+pu+'"></div><div><label class="field-label-inline">Actual</label><input class="cell-inp r mono" type="number" data-bind="'+b+'.actualUnits" value="'+au+'"></div><div><label class="field-label-inline">Price/Unit</label><input class="cell-inp r mono" type="number" data-bind="'+b+'.revenuePerUnit" value="'+(Number(v.revenuePerUnit)||0)+'"></div><div><label class="field-label-inline">Achievement</label><div class="mono" style="padding:8px 0;">'+(pu?pct(ach):'—')+'</div></div><div class="full"><label class="field-label-inline">Notes</label><input class="cell-inp" data-bind="'+b+'.notes" value="'+attr(v.notes||'')+'"></div></div><div class="item-row-actions"><button class="btn btn-sm btn-danger" data-action="del-volume" data-id="'+pid+'" data-idx="'+i+'">Delete</button></div></div>'}
+
+function tabSettings(p){const id=p.id;return '<div class="edit-hint">ⓘ Auto-saves.</div><div class="panel"><div class="panel-head"><h3>Settings</h3></div><div style="padding:16px;"><div class="form-grid">'+fld('Name','<input class="inp" data-bind="'+id+'.name" value="'+attr(p.name)+'">')+fld('Code','<input class="inp" data-bind="'+id+'.code" value="'+attr(p.code||'')+'">')+fld('Platform','<input class="inp" data-bind="'+id+'.platform" value="'+attr(p.platform||'')+'">')+fld('HP','<input class="inp mono" type="number" data-bind="'+id+'.hp" value="'+(p.hp||0)+'">')+fld('Status','<select class="inp" data-bind="'+id+'.status">'+['Planning','Active','On Hold','Completed'].map(s=>'<option'+(s===p.status?' selected':'')+'>'+s+'</option>').join('')+'</select>')+fld('Start','<input class="inp mono" type="date" data-bind="'+id+'.startDate" value="'+attr(p.startDate||'')+'">')+fld('End','<input class="inp mono" type="date" data-bind="'+id+'.endDate" value="'+attr(p.endDate||'')+'">')+fld('Description','<textarea class="inp" rows="3" data-bind="'+id+'.description">'+escapeHtml(p.description||'')+'</textarea>',1)+'</div></div><div class="form-actions"><span class="dim" style="font-size:11px;">Auto-saves</span><button class="btn btn-danger" data-action="delete-project" data-id="'+id+'">Delete</button></div></div>'}
+function fld(l,inner,full){return '<label class="'+(full?'full':'')+'"><span class="field-label">'+l+'</span>'+inner+'</label>'}
+
+function renderNewModal(){return '<div class="modal-backdrop" data-backdrop="cancel-new"><div class="modal"><div class="modal-head"><h2>New Project</h2><button class="btn btn-icon btn-ghost" data-action="cancel-new">×</button></div><div class="modal-body"><div class="form-grid">'+fld('Name *','<input class="inp" id="new-name" placeholder="Project name">')+fld('Code','<input class="inp" id="new-code">')+fld('Platform','<input class="inp" id="new-platform">')+fld('HP','<input class="inp mono" id="new-hp" type="number" value="0">')+fld('Status','<select class="inp" id="new-status">'+['Planning','Active','On Hold','Completed'].map(s=>'<option>'+s+'</option>').join('')+'</select>')+fld('Start','<input class="inp mono" id="new-start" type="date">')+fld('End','<input class="inp mono" id="new-end" type="date">')+fld('Description','<textarea class="inp" id="new-desc" rows="3"></textarea>',1)+'</div></div><div class="form-actions"><button class="btn" data-action="cancel-new">Cancel</button><button class="btn btn-primary" data-action="save-new">Create</button></div></div></div>'}
+function renderExportModal(){return '<div class="modal-backdrop" data-backdrop="close-backup"><div class="modal"><div class="modal-head"><h2>Export</h2><button class="btn btn-icon btn-ghost" data-action="close-backup">×</button></div><div class="modal-body"><p class="modal-desc">Tap <strong>Copy</strong>, paste into Notes/Mail.</p><textarea class="backup-textarea" id="backup-ta" readonly>'+escapeHtml(JSON.stringify(state.projects,null,2))+'</textarea></div><div class="form-actions"><button class="btn" data-action="close-backup">Close</button><button class="btn btn-primary" data-action="copy-export">Copy</button></div></div></div>'}
+function renderImportModal(){return '<div class="modal-backdrop" data-backdrop="close-backup"><div class="modal"><div class="modal-head"><h2>Import</h2><button class="btn btn-icon btn-ghost" data-action="close-backup">×</button></div><div class="modal-body"><p class="modal-desc">Paste backup JSON below.</p><textarea class="backup-textarea" id="import-ta" placeholder="Paste here"></textarea></div><div class="form-actions"><button class="btn" data-action="close-backup">Cancel</button><button class="btn btn-primary" data-action="do-import">Import</button></div></div></div>'}
+
+function init(){const l=loadFromStorage();state.projects=(l&&Array.isArray(l))?l:sampleProjects();saveToStorage();render()}
+init();
+</script>
+
+</body>
+</html>
